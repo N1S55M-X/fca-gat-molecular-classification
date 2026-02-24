@@ -123,6 +123,77 @@ To verify learning validity, training labels were shuffled while preserving vali
 | Validation AUPRC | 0.669 |
 
 ---
+## 🔬 Extended Cross-Validation Results (5-Fold Stratified CV)
+(check Extendedexp.py)
+To ensure robustness and avoid single-split optimism, FCA-GAT was evaluated
+using 5-fold stratified cross-validation with leakage-controlled graph construction.
+
+### Dataset Split
+
+- Total samples: 555
+- Invalid SMILES removed: 0
+- Per-fold split (approximate):
+  - Train: 388
+  - Validation: 83
+  - Test: 84
+
+---
+
+### 📊 Per-Fold Results
+
+| Fold | AUROC | AUPRC | F1 | MCC | BalancedAcc | Precision | Recall | τ |
+|------|-------|-------|-----|-----|-------------|-----------|--------|-----|
+| 0 | 0.843 | 0.875 | 0.698 | 0.102 | 0.510 | 0.536 | 1.000 | 0.043 |
+| 1 | 0.707 | 0.750 | 0.734 | 0.341 | 0.653 | 0.638 | 0.864 | 0.341 |
+| 2 | 0.651 | 0.741 | 0.695 | 0.095 | 0.522 | 0.543 | 0.966 | 0.385 |
+| 3 | 0.733 | 0.769 | 0.682 | 0.259 | 0.625 | 0.620 | 0.759 | 0.453 |
+| 4 | 0.768 | 0.807 | 0.685 | 0.372 | 0.686 | 0.717 | 0.655 | 0.537 |
+
+---
+
+### 📈 Cross-Validation Summary (Mean ± Std)
+
+| Metric | Mean | Std |
+|--------|------|------|
+| AUROC | 0.740 | ± 0.071 |
+| AUPRC | 0.789 | ± 0.055 |
+| F1 | 0.699 | ± 0.021 |
+| MCC | 0.234 | ± 0.130 |
+| Balanced Accuracy | 0.599 | ± 0.079 |
+| Precision | 0.611 | ± 0.075 |
+| Recall | 0.849 | ± 0.144 |
+| Optimal Threshold (τ) | 0.352 | ± 0.188 |
+
+---
+
+### 🧪 Calibration & Conformal Prediction
+
+| Metric | Mean | Std |
+|--------|------|------|
+| Calibrated AUROC | 0.720 | ± 0.062 |
+| Calibrated AUPRC | 0.725 | ± 0.061 |
+| Conformal Coverage | 0.942 | ± 0.037 |
+| Conformal Singleton Rate | 0.315 | ± 0.105 |
+
+---
+
+### 📌 Interpretation
+- **High Recall (~0.85 mean across folds)**  
+  The model detects most cardiotoxic drugs, minimizing false negatives.
+
+- **Moderate Precision (~0.61 mean)**  
+  Some safe drugs are flagged as toxic.  
+  In toxicology and drug safety screening, this bias is often acceptable:
+  missing a harmful drug is more costly than over-flagging a safe one.
+- Performance remains consistent across folds with moderate variance.
+- AUROC ≈ 0.74 indicates meaningful discrimination beyond random chance.
+- AUPRC ≈ 0.79 suggests good behavior under class imbalance.
+- Calibration slightly reduces AUROC, indicating probability overconfidence correction.
+- Conformal coverage (~94%) confirms uncertainty control behaves as expected.
+
+These results demonstrate stable learning under stratified cross-validation
+with leakage-controlled graph construction.
+
 ## ⚠️ Project Status: Research Prototype
 
 This repository represents an early-stage research prototype exploring
